@@ -1,0 +1,61 @@
+# Blue Deployment (v1)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      version: "1.23"
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: "1.23"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.23
+        ports:
+        - containerPort: 80
+
+---
+# Green Deployment (v2)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-green
+spec:
+  replicas: 0              # Initially scaled to zero
+  selector:
+    matchLabels:
+      app: nginx
+      version: "1.24"
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: "1.24"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.24
+        ports:
+        - containerPort: 80
+
+---
+# Service pointing to Blue by default
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+    version: "1.23"       # Switch to "1.24" for Green activation
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

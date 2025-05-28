@@ -1,0 +1,86 @@
+---
+# 1. Namespace (optional but recommended)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: db
+  labels:
+    app: database
+    tier: backend
+
+---
+# 2. Headless Service for DNS resolution
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: db
+  labels:
+    app: mysql
+spec:
+  clusterIP: None  # Makes this a headless service
+  ports:
+  - port: 3306
+    name: mysql
+  selector:
+    app: mysql
+
+---
+# 3. StatefulSet with PersistentVolumeClaims
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: db
+spec:
+  serviceName: "mysql-service"  # Must match the headless service
+  replicas: 3  # Pods will be created sequentially (0, 1, 2)
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "securepassword"
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:  # Dynamic PVC creation for each pod
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: "standard"  # Adjust for your cluster
+
+---
+# 4. NetworkPolicy (optional)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mysql-allow-frontend
+  namespace: db
+spec:
+  podSelector:
+    matchLabels:
+      app: mysql
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          tier: frontend
+    ports:
+    - port: 3306

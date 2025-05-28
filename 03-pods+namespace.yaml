@@ -1,0 +1,85 @@
+---
+# 1. Create the nexus namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexus
+  labels:
+    app: nexus
+    purpose: artifact-repository
+
+---
+# 2. PersistentVolumeClaim for Nexus data (adjust storage size as needed)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nexus-data-pvc
+  namespace: nexus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi  # Minimum recommended for Nexus
+
+---
+# 3. Deployment for Nexus pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus
+  namespace: nexus
+  labels:
+    app: nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus
+  template:
+    metadata:
+      labels:
+        app: nexus
+    spec:
+      containers:
+      - name: nexus
+        image: sonatype/nexus3:latest  # Official image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081  # Web UI/API port
+        - containerPort: 5000  # Docker registry port (optional)
+        volumeMounts:
+        - name: nexus-data
+          mountPath: /nexus-data  # Nexus storage path
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+      volumes:
+      - name: nexus-data
+        persistentVolumeClaim:
+          claimName: nexus-data-pvc
+
+---
+# 4. Service to expose Nexus
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus-service
+  namespace: nexus
+spec:
+  type: NodePort  # Use LoadBalancer for cloud providers
+  ports:
+  - port: 8081
+    targetPort: 8081
+    nodePort: 30080  # Access via <NodeIP>:30080
+    name: http
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30050  # For Docker registry (optional)
+    name: docker
+  selector:
+    app: nexus

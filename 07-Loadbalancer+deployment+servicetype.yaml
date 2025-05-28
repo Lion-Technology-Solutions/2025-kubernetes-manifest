@@ -1,0 +1,56 @@
+---
+# 1. Create a Namespace (optional but recommended)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    env: production
+
+---
+# 2. Deployment (example: Nginx)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: production
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+---
+# 3. LoadBalancer Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadbalancer
+  namespace: production
+  annotations:
+    # Cloud-specific annotations (examples):
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"  # AWS NLB
+    cloud.google.com/load-balancer-type: "external"           # GCP
+    service.beta.kubernetes.io/azure-load-balancer-internal: "false"  # Azure
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx  # Matches the deployment labels
+  ports:
+    - protocol: TCP
+      port: 80       # External LB port
+      targetPort: 80 # Container port
+  # Optional: Assign static IP (cloud-dependent)
+  # loadBalancerIP: "x.x.x.x" 

@@ -1,0 +1,69 @@
+---
+# 1. Create a dedicated namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web
+  labels:
+    app: nginx
+    tier: frontend
+
+---
+# 2. Pod definition
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: web
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent  # Use local image if available
+    ports:
+    - containerPort: 80
+      name: http
+      protocol: TCP
+    # Health checks
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 2
+      periodSeconds: 5
+    # Resource management
+    resources:
+      requests:
+        cpu: "100m"  # 0.1 CPU core
+        memory: "128Mi"
+      limits:
+        cpu: "500m"   # 0.5 CPU core
+        memory: "256Mi"
+
+---
+# 3. Service to expose the pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: web
+spec:
+  type: NodePort  # Use LoadBalancer in cloud environments
+  selector:
+    app: nginx
+    tier: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080  # Access via <NodeIP>:30080
+    protocol: TCP
+    name: http

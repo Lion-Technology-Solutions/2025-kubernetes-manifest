@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-internal-service
+  namespace: default  # Change to your desired namespace
+spec:
+  type: ClusterIP  # Default type (optional to specify)
+  selector:
+    app: my-app  # Must match pod labels
+    tier: backend
+  ports:
+    - name: http  # Port name
+      protocol: TCP
+      port: 80    # Service port (how you access it internally)
+      targetPort: 8080  # Pod port (where traffic is forwarded)
+    - name: metrics
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
