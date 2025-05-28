@@ -1,0 +1,15 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"  # Make it default
+provisioner: ebs.csi.aws.com  # AWS EBS CSI driver
+volumeBindingMode: WaitForFirstConsumer  # Delay binding until pod scheduling
+reclaimPolicy: Delete  # Automatically delete EBS volume when PVC is deleted
+parameters:
+  type: gp3  # General Purpose SSD (gp2/gp3/io1/io2/st1/sc1)
+  encrypted: "true"  # Enable EBS encryption
+  # Optional: Specify KMS key ARN for encryption (replace with your key)
+  # kmsKeyId: arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab
+allowVolumeExpansion: true  # Allow volume resizing later

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-pv
+spec:
+  capacity:
+    storage: 100Gi  # Size of the EBS volume
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce  # RWO for single-node access
+  persistentVolumeReclaimPolicy: Retain  # Keep EBS volume after PVC deletion
+  storageClassName: ebs-sc  # Matches the StorageClass
+  csi:
+    driver: ebs.csi.aws.com
+    volumeHandle: vol-0123456789abcdef0  # << REPLACE with existing EBS volume ID
+    fsType: ext4
+  nodeAffinity:  # Optional: Restrict to specific AZ
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: topology.ebs.csi.aws.com/zone
+          operator: In
+          values:
+          - us-west-2a  # << REPLACE with your AZ

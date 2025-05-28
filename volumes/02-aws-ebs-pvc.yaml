@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-pvc
+  namespace: default  # << CHANGE if needed
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi  # Can be <= PV size
+  storageClassName: ebs-sc  # Matches StorageClass
+  # volumeName: ebs-pv  << Uncomment to bind to a specific PV
