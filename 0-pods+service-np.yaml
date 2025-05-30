@@ -16,10 +16,10 @@ kind: Service
 metadata:
   name: nginx-nodeport-service
 spec:
-  type: NodePort
+  type: NodePort     #ClusterIP, LoadBalancer
   selector:
     app: nginx  # Matches the Pod's label
   ports:
     - port: 80       # Service port (cluster-internal)
       targetPort: 80 # Pod's containerPort
-      nodePort: 30007 # Optional: Manually chosen port (30000-32767)
+      nodePort: 30010 # Optional: Manually chosen port (30000-32767)
