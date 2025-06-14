@@ -1,5 +1,5 @@
 ---
-# 1. Create a Namespace (optional but recommended)
+#1. Create a Namespace (optional but recommended)
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -8,7 +8,7 @@ metadata:
     env: production
 
 ---
-# 2. Deployment (example: Nginx)
+#2. Deployment (example: Nginx)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
