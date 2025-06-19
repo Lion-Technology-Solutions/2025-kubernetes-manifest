@@ -1,0 +1,33 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJS1dPUkNkc1NiTlF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TlRBMk1Ua3hOakExTXpaYUZ3MHpOVEEyTVRjeE5qRXdNelphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURTclJVUzZaMGNGd1c1b1Qvd25ZODgxY3c5UlpVYkRpZ0lXS3haSVFZbk4yL0VwZmZGTFd6QmpEK1EKMTJhZWNIRURQRGhWeTNxY2JUWjIvaTdCSVBUTm1zMXRoTC9YSFAzbFRKVk96eVQwMjRORDNCQjN6WHhCMlBGcQpPUm9uOUxiSHpkNm8wOXdyMDNtV2IvR0VSUkt3bUxoOE1pK3ZOcFhxL3Y3R0xJTkRtVmlQdjZaNlkxM3o3bUF4CmNxMzdCVklHUHdscHFHSzRQTi9KKzlEOWk3ZERFT0VBUTZheWxUcmlwQUczamg1SUt5MjR2RThVNGVMVHpXS0kKazdmMXlKL1ZkNzJQV3dMTEpBMlp1OWpHSzdRL01ndVpqS2dtTDVHd2kyYmpaV0dpc0NrTVBaM0ZQZkgxTDc0RQpzVi9KZ0JrNmpNTjdRcWlIVXA5ZFJ4UDRCV2RiQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUL3ZUQVlzZk5aU2RMZHJjT0NHL1VKLzNiUjRUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0lKL0o4WktVego5dlA0ZFJHaDlpdDJiWG9rZzJJNWxjUTRpT1h0c0dSdTVRNTJNTFFUa2J0WkFUUjd6Q1BMaVRvaGo3TzlXNldzCjFVdzR6QUdMMVVHc3JWblZRdm1Ta0tBYjM0cW5EbThDVTFXWEJqVy9LYlJJeCtobXdEaVQ1citTeTV1UEx6a2wKcnVncDQzRXh4bytiMTJCZTVoa0VTdDNqUnE0aDZ4eklrSXV1VlJySnpCdlp2Tm9DTlh6cUZmRWdVZVNqNFpaVwpsdkNxcVRNc3NxN0MyUVBpOE85aGNwV1FDT2x6L1pMZ1ZoZDRxQWVqZG9HWUNobmowZFAzaElHNzhhdlNwMXVlCnJYeTIwanBOaGs3c0c2djJ1Lyt5cElheVJrem5ieUYvQzBNeDBLbGtuQ00vZ09oWm5RdUlneFAxNUZBUkl6SXoKVU81QUc1NDJMdHZHCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    server: https://28DB9E58720FA57B8598D7CFE6761968.gr7.ca-central-1.eks.amazonaws.com
+  name: class30.ca-central-1.eksctl.io
+contexts:
+- context:
+    cluster: class30.ca-central-1.eksctl.io
+    user: liontech@class30.ca-central-1.eksctl.io
+  name: liontech@class30.ca-central-1.eksctl.io
+current-context: liontech@class30.ca-central-1.eksctl.io
+kind: Config
+preferences: {}
+users:
+- name: liontech@class30.ca-central-1.eksctl.io
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - eks
+      - get-token
+      - --output
+      - json
+      - --cluster-name
+      - class30
+      - --region
+      - ca-central-1
+      command: aws
+      env:
+      - name: AWS_STS_REGIONAL_ENDPOINTS
+        value: regional
+      provideClusterInfo: false
